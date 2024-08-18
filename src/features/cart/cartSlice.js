@@ -38,7 +38,10 @@ const cartSlice = createSlice({
 
       orderItem.quantity--;
       orderItem.totalPrice -= orderItem.unitPrice;
+      if (orderItem.quantity === 0)
+        cartSlice.caseReducers.deleteItem(state, action);
     },
+
     clearCart(state) {
       state.cart = [];
     },
