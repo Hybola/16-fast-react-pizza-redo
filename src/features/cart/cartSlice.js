@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   cart: [],
@@ -46,7 +46,7 @@ export const {
   decreaseItemQuantity,
   clearCart,
 } = cartSlice.actions;
-export default cartSlice.reducer;
+
 export const getTotalCartQuatity = (state) =>
   state.cart.cart.reduce((acc, item) => item.quantity + acc, 0);
 export const getTotalCartPrice = (state) =>
@@ -54,3 +54,4 @@ export const getTotalCartPrice = (state) =>
 export const getCart = (state) => state.cart.cart;
 export const getCurrenctyQuantityById = (id) => (state) =>
   state.cart.cart.find((item) => item.pizzaId === id)?.quantity ?? 0;
+export default cartSlice.reducer;
