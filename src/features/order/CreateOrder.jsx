@@ -17,7 +17,13 @@ const isValidPhone = (str) =>
 
 function CreateOrder() {
   const navigation = useNavigation();
-  const username = useSelector((state) => state.user.username);
+  const {
+    username,
+    address,
+    status: addressStatus,
+    position,
+    error: errorAddress,
+  } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const isSubmitting = navigation.state === "submitting";
@@ -61,19 +67,37 @@ function CreateOrder() {
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
               className="input w-full"
               type="text"
               name="address"
+              defaultValue={address}
+              disabled={addressStatus === "loading"}
               required
             />
-            <Button type="small" onClick={() => dispatch(fetchAddress())}>
-              Get address
-            </Button>
+            {addressStatus === "error" && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                {errorAddress}
+              </p>
+            )}
           </div>
+          {!position.latitude && !position.longitude && (
+            <span className="absolute right-[3px] top-[3px] z-50 md:right-[5px] md:top-[5px]">
+              <Button
+                type="small"
+                disabled={addressStatus === "loading"}
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+              >
+                Get address
+              </Button>
+            </span>
+          )}
         </div>
 
         <div className="item-center mb-12 flex gap-5">
@@ -90,8 +114,20 @@ function CreateOrder() {
           </label>
         </div>
         <input type="hidden" name="cart" value={JSON.stringify(cart)} />
+        <input
+          type="hidden"
+          name="position"
+          value={
+            position.latitude && position.longitude
+              ? `${position.latitude},${position.longitude}`
+              : ""
+          }
+        />
         <div>
-          <Button type="primary" disabled={isSubmitting}>
+          <Button
+            type="primary"
+            disabled={isSubmitting || addressStatus === "loading"}
+          >
             {isSubmitting
               ? `Placing order`
               : `Order now for ${formatCurrency(totalPrice)}`}
@@ -117,10 +153,10 @@ export async function action({ request }) {
   }
 
   console.log(order);
-  const newOrder = await createOrder(order);
-  //DO NOT OVER USE store.dispatch
-  store.dispatch(clearCart());
-  return redirect(`/order/${newOrder.id}`); // Code ที่คิดว่าจะลืม ต้องทวนซ้ำเวลาว่าง
-  // return null;
+  // const newOrder = await createOrder(order);
+  // //DO NOT OVER USE store.dispatch
+  // store.dispatch(clearCart());
+  // return redirect(`/order/${newOrder.id}`); // Code ที่คิดว่าจะลืม ต้องทวนซ้ำเวลาว่าง
+  return null;
 }
 export default CreateOrder;
