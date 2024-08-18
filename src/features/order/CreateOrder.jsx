@@ -153,10 +153,10 @@ export async function action({ request }) {
   }
 
   console.log(order);
-  // const newOrder = await createOrder(order);
-  // //DO NOT OVER USE store.dispatch
-  // store.dispatch(clearCart());
-  // return redirect(`/order/${newOrder.id}`); // Code ที่คิดว่าจะลืม ต้องทวนซ้ำเวลาว่าง
-  return null;
+  const newOrder = await createOrder(order);
+  //DO NOT OVER USE store.dispatch
+  store.dispatch(clearCart());
+  return redirect(`/order/${newOrder.id}`); // Code ที่คิดว่าจะลืม ต้องทวนซ้ำเวลาว่าง
+  // return null;
 }
 export default CreateOrder;
